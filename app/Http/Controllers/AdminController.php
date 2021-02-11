@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\LoginRequest;
 use App\Disease;
 use App\Solution;
 use App\User;
@@ -12,23 +14,12 @@ use Validator;
 
 class AdminController extends Controller
 {
-    public function createUser(Request $request){
-        $validator = Validator::make($request->all(), [
-            'name' => 'required | min:6',
-            'email' => 'required| email | unique:users',
-            'phone' => 'required | digits_between:9,13',
-            'password' => 'required | min:8 |max:32',
-            'confirmpassword' => 'same:password',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
-        $inputdata = $request->all();
+    public function createUser(CreateUserRequest $request){
         $user = new User;
-        $user->name = $inputdata['name'];
-        $user->email = $inputdata['email'];
-        $user->phone = $inputdata['phone'];
-        $user->password = Hash::make($inputdata['password']);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->password = Hash::make($request->password);
         $user->save();
         $accessToken = $user->createToken('authToken')->accessToken;
         $response = ['user' => $user,
@@ -36,14 +27,8 @@ class AdminController extends Controller
                 ];
         return response()->json($response);
     }
-    public function login(Request $request){
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required| min:8 |max:32',
-        ]);
-        if ($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+    public function login(LoginRequest $request){
+        
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             // Authentication passed...
             $objectToken = auth()->user()->createToken('authToken');
@@ -54,15 +39,15 @@ class AdminController extends Controller
                         'accessToken' => $accessToken,
                         'expires_at' => $expires_at,
                     ];
-            return response()->json($response);
         }
         else{
             $response = [
                 "statusText" => 'not Ok',
                 "message" => 'mismatch Credentials'
             ];
-            return response()->json($response);
+            
         }
+        return response()->json($response);
     }
     public function userDetails($id){
         $user = User::findOrFail($id);
@@ -89,7 +74,7 @@ class AdminController extends Controller
     }
     public function promoteUser(Request $request, $id){
         $authUser = auth()->user();
-        $users = $authUser;
+        // $users = $authUser;
         if($authUser->role == 'admin'){
             $user = User::findOrFail($id);
             $user->role = 'admin';
