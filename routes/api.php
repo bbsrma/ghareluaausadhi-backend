@@ -24,8 +24,8 @@ Route::middleware(['auth:api'])->group(function () {
     //admin/editor post related routes
     Route::post('/admin/post/create','AdminController@postDisease');
     Route::get('/admin/post/{id}/details','AdminController@getPostDetails');
-    Route::post('/admin/post/{id}/delete','AdminController@deletePost');
-    Route::get('/admin/{userId}/posts','AdminController@getAllDiseases');
+    Route::post('/admin/post/{disease}/delete','AdminController@deletePost');
+    Route::get('/admin/{user}/posts','AdminController@getAllDiseases');
 
     //system user related routes 
     Route::get('/admin/users/','AdminController@getAllUser');

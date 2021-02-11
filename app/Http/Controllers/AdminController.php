@@ -50,7 +50,6 @@ class AdminController extends Controller
         return response()->json($response);
     }
     public function userDetails(User $user){
-        return $user;
         return response()->json($user);
     }
     public function getAllUser(Request $request ){
@@ -62,22 +61,19 @@ class AdminController extends Controller
         return response()->json($users);
     }
     public function verifyUser(Request $request , User $user){
-        // return $user;
         $authUser = auth()->user();
         $users = $authUser;
         if($authUser->role == 'admin'){
-            // $user = User::findOrFail($id);
             $user->isVerified = true;
             $user->save();
             $users = User::all();
-        }        
+        }
         return response()->json($users);
     }
     public function promoteUser(Request $request, User $user){
         $authUser = auth()->user();
-        // $users = $authUser;
+        $users = $authUser;
         if($authUser->role == 'admin'){
-            // $user = User::findOrFail($id);
             $user->role = 'admin';
             $user->save();
             $users = User::all();
@@ -101,54 +97,36 @@ class AdminController extends Controller
         return response()->json($disease);
     }
 
-    public function getAllDiseases( $userId ){
-        $user = User::findOrFail($userId);
+    public function getAllDiseases( User $user ){
         if($user->role == 'admin')
             $diseases = Disease::where('id','>=', 1)->with('solutions')->with('view')->paginate(15);
         else
-            $diseases = Disease::where('postedby', $userId)->with('solutions')->with('view')->paginate(15);
+            $diseases = Disease::where('postedby', $user->id)->with('solutions')->with('view')->paginate(15);
         return response()->json($diseases);
     }
     public function getPostDetails( $postId ){
         $disease = Disease::where('id',$postId)->with('solutions')->with('user')->first();
         return $disease;
     }
-    public function deletePost( $postId){
-        // return $postId .' postid Deleted';
-        $response= [];
-        $diseases = Disease::where('id',$postId)->with('solutions')->with('view')->get();
-        if(count($diseases) <= 0){
-        $response = [ "status" => 'fail',
-                    "message" => 'Couldnot Delete'];
-        return $response;
-        }
-        $disease = $diseases[0];
-
-        if(count($disease->solutions) >= 1){
-            $solutions = $disease->solutions;
-            foreach( $solutions as $solution){
-                $solution->delete();
-            }
-        }
-        if($disease->view){
-            $view = $disease->view;
-            $view->delete();
-        }
-        $disease->delete();
-        $response = [ "status" => 'success',
+    public function deletePost( Disease $disease){
+        if($disease->delete())
+            $response = [ "status" => 'success',
                         "message" => 'successfullly Deleted',
                         "disease" => $disease,
                     ];
+        else
+            $response = [ 
+                "status" => 'fail',
+                "message" => 'Couldnot Delete'
+            ];
         return response()->json($response);
     }
 
     public function getEmailStatus($email){
         $user = User::where('email', $email)->first();
-        // return $user;
         if(!$user)
             return 1;
         else 
             return 0;
-        // return $user;
     }
 }
