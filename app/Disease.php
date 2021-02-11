@@ -17,14 +17,12 @@ class Disease extends Model
         return $this->hasOne('App\View');
     }
 
-        // this is a recommended way to declare event handlers
-        public static function boot() {
-            parent::boot();
-    
-            static::deleting(function($disease) { // before delete() method call this
-                 $disease->solutions()->delete();
-                 $disease->view()->delete();
-                 // do the rest of the cleanup...
-            });
-        }
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(function($disease) { // before delete() method call this
+                $disease->solutions()->delete();
+                $disease->view()->delete();
+        });
+    }
 }

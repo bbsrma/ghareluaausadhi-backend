@@ -15,12 +15,11 @@ class FrontendController extends Controller
         $groupbycategory = $diseases->mapToGroups(function($disease){
             return [ $disease->category => $disease];
         } );
-        $diseasebycategory =$diseases->setCollection($groupbycategory);
+        $diseasebycategory = $diseases->setCollection($groupbycategory);
         return response()->json($diseasebycategory);
     }
     public function showAllPost(){
         $diseases = Disease::with('view')->paginate(12);
-        // Log::info('Showing user profile for user: '.$diseases);
         return response()->json($diseases);
     }
     public function categoryDisease($category){
@@ -51,7 +50,7 @@ class FrontendController extends Controller
         return response()->json($disease);
     }
     public function getUsers(Request $request){
-        return User::all();
+        return response()->json(User::all());
     }
     public function showTopViewed(){
         // $disease = Disease::with('view')->orderBy('view.view_count' , 'DESC')->get()->take(6);
@@ -59,8 +58,6 @@ class FrontendController extends Controller
         $disease = Disease::with('view')->whereExists(function ($query) {
             $query->select(DB::raw('view_count'))
                   ->from('views');
-                //   ->whereRaw('view_count = 18');
-                //   ->whereRaw('view_count > 20');
         })
         ->get()
         ->take(8);
