@@ -22,9 +22,10 @@ class AdminController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
         $accessToken = $user->createToken('authToken')->accessToken;
-        $response = ['user' => $user,
-                     'accessToken' => $accessToken
-                ];
+        $response = [
+                        'user' => $user,
+                        'accessToken' => $accessToken
+                    ];
         return response()->json($response);
     }
     public function login(LoginRequest $request){
@@ -44,13 +45,12 @@ class AdminController extends Controller
             $response = [
                 "statusText" => 'not Ok',
                 "message" => 'mismatch Credentials'
-            ];
-            
+            ];            
         }
         return response()->json($response);
     }
-    public function userDetails($id){
-        $user = User::findOrFail($id);
+    public function userDetails(User $user){
+        return $user;
         return response()->json($user);
     }
     public function getAllUser(Request $request ){
@@ -61,22 +61,23 @@ class AdminController extends Controller
             $users = [$user];
         return response()->json($users);
     }
-    public function verifyUser(Request $request , $id){
+    public function verifyUser(Request $request , User $user){
+        // return $user;
         $authUser = auth()->user();
         $users = $authUser;
         if($authUser->role == 'admin'){
-            $user = User::findOrFail($id);
+            // $user = User::findOrFail($id);
             $user->isVerified = true;
             $user->save();
             $users = User::all();
         }        
         return response()->json($users);
     }
-    public function promoteUser(Request $request, $id){
+    public function promoteUser(Request $request, User $user){
         $authUser = auth()->user();
         // $users = $authUser;
         if($authUser->role == 'admin'){
-            $user = User::findOrFail($id);
+            // $user = User::findOrFail($id);
             $user->role = 'admin';
             $user->save();
             $users = User::all();

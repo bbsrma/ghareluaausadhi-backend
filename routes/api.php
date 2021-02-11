@@ -29,11 +29,11 @@ Route::middleware(['auth:api'])->group(function () {
 
     //system user related routes 
     Route::get('/admin/users/','AdminController@getAllUser');
-    Route::get('/admin/user/{id}','AdminController@userDetails');
+    Route::get('/admin/user/{user}','AdminController@userDetails');
 
     //user verification route
-    Route::get('/admin/user/{id}/verify','AdminController@verifyUser');
-    Route::post('/admin/user/{id}/promote','AdminController@promoteUser');
+    Route::get('/admin/user/{user}/verify','AdminController@verifyUser');
+    Route::post('/admin/user/{user}/promote','AdminController@promoteUser');
 });
 
     //user auth routes
@@ -43,8 +43,8 @@ Route::middleware(['auth:api'])->group(function () {
 
 
     //frontend related routes
-    Route::get('disesbycategory','FrontendController@diseaseByCategory');
-    Route::get('post/bycategory/{category}','FrontendController@categoryDisease');
+    Route::get('/disesbycategory','FrontendController@diseaseByCategory');
+    Route::get('/post/bycategory/{category}','FrontendController@categoryDisease');
     Route::get('/post/postByName/{name}','FrontendController@showPostByName');
     Route::get('/post/{postId}/details','FrontendController@showPostDetails');
     Route::get('/posts','FrontendController@showAllPost');
