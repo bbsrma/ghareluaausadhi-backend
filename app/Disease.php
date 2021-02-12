@@ -16,6 +16,10 @@ class Disease extends Model
     public function view(){
         return $this->hasOne('App\View');
     }
+    public function topViews(){
+        return $this->hasOne('App\View')
+                ->orderBy('view_count' ,'desc');
+    }
 
     public static function boot() {
         parent::boot();

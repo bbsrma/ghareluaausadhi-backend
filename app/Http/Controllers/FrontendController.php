@@ -53,14 +53,7 @@ class FrontendController extends Controller
         return response()->json(User::all());
     }
     public function showTopViewed(){
-        // $disease = Disease::with('view')->orderBy('view.view_count' , 'DESC')->get()->take(6);
-        // $disease = Disease::with('view')->(select('view.view_count', DB::raw('(view_count) as view')));
-        $disease = Disease::with('view')->whereExists(function ($query) {
-            $query->select(DB::raw('view_count'))
-                  ->from('views');
-        })
-        ->get()
-        ->take(8);
-        return response()->json($disease);
+        $views = View::orderBy('view_count','desc')->with('disease')->take(9)->get();
+        return response()->json($views);
     }
 }

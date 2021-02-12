@@ -48,6 +48,6 @@ Route::middleware(['auth:api'])->group(function () {
     Route::get('/post/postByName/{name}','FrontendController@showPostByName');
     Route::get('/post/{postId}/details','FrontendController@showPostDetails');
     Route::get('/posts','FrontendController@showAllPost');
-    Route::get('disease/trending','FrontendController@showTrendingDiseases');
-    Route::get('disease/view/top','FrontendController@showTopViewed');
+    Route::get('/disease/trending','FrontendController@showTrendingDiseases');
+    Route::get('/disease/view/top','FrontendController@showTopViewed');
     Route::get('/users','FrontendController@getUsers');
